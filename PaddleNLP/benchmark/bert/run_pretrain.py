@@ -224,6 +224,12 @@ def dist_optimizer(args, optimizer):
             'init_loss_scaling': args.scale_loss,
         }
 
+    k_steps = int(65536 / (args.batch_size * fleet.worker_num()))
+    dist_strategy.gradient_merge = True
+    dist_strategy.gradient_merge_configs = {
+        "k_steps": k_steps
+    }
+
     optimizer = fleet.distributed_optimizer(optimizer, strategy=dist_strategy)
     return optimizer
 
